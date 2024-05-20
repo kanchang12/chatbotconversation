@@ -146,8 +146,7 @@
                     appendMessage(agentMessage, 'agent-message');
                     readAloud(agentMessage);
 
-                    // Add agent response to the conversation
-                    conversation.push({"role": "assistant", "content": agentMessage});
+                    
                 }
             })
             .catch(error => console.error('Error:', error));
