@@ -115,45 +115,31 @@ button {
             messageBox.scrollTop = messageBox.scrollHeight;  // Auto-scroll to the bottom
         }
 
-        function sendTextToBackend(text) {
-    // Add user message to the conversation
-    conversation.push({"role": "user", "content": text});
+        unction sendTextToBackend(text) {
+            // Add user message to the conversation
+            conversation.push({"role": "user", "content": text});
 
-    // Check if the agent's response is already present in the conversation
-    const lastAgentResponseIndex = conversation.findIndex(msg => msg.role === 'assistant');
-    if (lastAgentResponseIndex !== -1) {
-        return;  // Skip sending request if agent's response is already present
-    }
+            fetch('/process_text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ conversation: conversation }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error from backend:', data.error);
+                } else {
+                    const agentMessage = data.answer;
+                    appendMessage('Agent: ' + agentMessage, 'agent-message');
+                    readAloud(agentMessage);
 
-    fetch('/process_text', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ conversation: conversation }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            console.error('Error from backend:', data.error);
-        } else {
-            const agentMessage = data.answer;
-            appendMessage('Agent: ' + agentMessage, 'agent-message');
-            readAloud(agentMessage);
-
-            // Add agent response to the conversation
-            conversation.push({"role": "assistant", "content": agentMessage});
-
-            // Check if the conversation has exceeded a certain length
-            // Limit the conversation length to prevent the model from getting stuck
-            if (conversation.length >= 10) {
-                stopRecognition();  // Stop the conversation to prevent model from getting stuck
-            }
+                    
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
 
 
         function readAloud(text) {
