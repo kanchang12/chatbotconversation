@@ -116,31 +116,37 @@ button {
         }
 
         function sendTextToBackend(text) {
-            // Add user message to the conversation
-            conversation.push({"role": "user", "content": text});
+    // Add user message to the conversation
+    conversation.push({"role": "user", "content": text});
 
-            fetch('/process_text', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ conversation: conversation }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error('Error from backend:', data.error);
-                } else {
-                    const agentMessage = data.answer;
-                    appendMessage('Agent: ' + agentMessage, 'agent-message');
-                    readAloud(agentMessage);
+    // Check if the agent's response is already present in the conversation
+    const lastAgentResponse = conversation.find(msg => msg.role === 'assistant');
+    if (lastAgentResponse) {
+        return;  // Skip sending request if agent's response is already present
+    }
 
-                    // Add agent response to the conversation
-                    conversation.push({"role": "assistant", "content": agentMessage});
-                }
-            })
-            .catch(error => console.error('Error:', error));
+    fetch('/process_text', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ conversation: conversation }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error from backend:', data.error);
+        } else {
+            const agentMessage = data.answer;
+            appendMessage('Agent: ' + agentMessage, 'agent-message');
+            readAloud(agentMessage);
+
+            // Add agent response to the conversation
+            conversation.push({"role": "assistant", "content": agentMessage});
         }
+    })
+    .catch(error => console.error('Error:', error));
+}
 
         function readAloud(text) {
             const speech = new SpeechSynthesisUtterance(text);
