@@ -16,15 +16,7 @@
         }
         #container {
             text-align: center;
-        }
-        #image-container {
-            width: 40%; /* Make the container 40% of the screen width */
-            margin: auto; /* Center the container horizontally */
-        }
-        #centered-image {
-            display: block;
-            max-width: 100%; /* Ensure the image doesn't exceed the container's width */
-            height: auto; /* Maintain aspect ratio */
+            width: 60%;  /* Make the container 60% of the screen width */
         }
         #message-box {
             width: 100%;  /* Make the message box take up the full width of the container */
@@ -58,107 +50,116 @@
         button:hover {
             background-color: #45a049;  /* Darker green on hover */
         }
+        #image-container {
+            width: 40%; /* Make the container 40% of the screen width */
+            margin: auto; /* Center the container horizontally */
+        }
+        #centered-image {
+            display: block;
+            max-width: 100%; /* Ensure the image doesn't exceed the container's width */
+            height: auto; /* Maintain aspect ratio */
+        }
     </style>
 </head>
 <body>
     <div id="container">
-            <h2>Talk to a Financial Advisor</h2>
-    
+        <h2>Talk to a Financial Advisor</h2>
+        <div id="message-box"></div> <!-- Ensure this is always present in the DOM -->
         <div id="image-container">
             <img src="https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Appropriate Image" id="centered-image">
         </div>
-        <!-- <div id="message-box"></div> -->
         <button onclick="startRecognition()">Speak</button>
         <button onclick="stopRecognition()">Stop</button>
     </div>
+    <script>
+        let recognition;
+        let isRecognizing = false;
+        let conversation = [];
 
-<script>
-    let recognition;
-    let isRecognizing = false;
-    let conversation = [];
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Sorry, your browser does not support Speech Recognition');
+        } else {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
 
-    if (!('webkitSpeechRecognition' in window)) {
-        alert('Sorry, your browser does not support Speech Recognition');
-    } else {
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-
-        recognition.onresult = function(event) {
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    const text = event.results[i][0].transcript;
-                    appendMessage(text, 'user-message');
-                    sendTextToBackend(text);
+            recognition.onresult = function(event) {
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        const text = event.results[i][0].transcript;
+                        appendMessage(text, 'user-message');
+                        sendTextToBackend(text);
+                    }
                 }
-            }
-        };
+            };
 
-        recognition.onerror = function(event) {
-            console.error('Speech recognition error detected: ' + event.error);
-        };
-    }
-
-    function startRecognition() {
-        if (isRecognizing) {
-            return;
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error detected: ' + event.error);
+            };
         }
-        isRecognizing = true;
-        recognition.start();
-    }
 
-    function stopRecognition() {
-        if (!isRecognizing) {
-            return;
-        }
-        isRecognizing = false;
-        recognition.stop();
-        conversation = [];  // Clear the conversation when stopped
-    }
-
-    function appendMessage(text, className) {
-        const messageBox = document.getElementById('message-box');
-        const message = document.createElement('div');
-        message.className = className;
-        message.textContent = text;
-        messageBox.appendChild(message);
-        messageBox.scrollTop = messageBox.scrollHeight;  // Auto-scroll to the bottom
-    }
-
-    function sendTextToBackend(text) {
-        // Add user message to the conversation
-        conversation.push({"role": "user", "content": text});
-
-        fetch('/process_text', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ conversation: conversation }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error('Error from backend:', data.error);
-            } else {
-                const agentMessage = data.answer;
-                appendMessage('Agent: ' + agentMessage, 'agent-message');
-                readAloud(agentMessage);
-
-                // Add agent response to the conversation
-                conversation.push({"role": "assistant", "content": agentMessage});
+        function startRecognition() {
+            if (isRecognizing) {
+                return;
             }
-        })
-        .catch(error => console.error('Error:', error));
-    }
+            isRecognizing = true;
+            recognition.start();
+        }
 
-    function readAloud(text) {
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = 'en-US';
-        window.speechSynthesis.speak(speech);
-    }
-</script>
+        function stopRecognition() {
+            if (!isRecognizing) {
+                return;
+            }
+            isRecognizing = false;
+            recognition.stop();
+            conversation = [];  // Clear the conversation when stopped
+        }
 
+        function appendMessage(text, className) {
+            const messageBox = document.getElementById('message-box');
+            if (!messageBox) {
+                console.error('Message box element not found');
+                return;
+            }
+            const message = document.createElement('div');
+            message.className = className;
+            message.textContent = text;
+            messageBox.appendChild(message);
+            messageBox.scrollTop = messageBox.scrollHeight;  // Auto-scroll to the bottom
+        }
 
+        function sendTextToBackend(text) {
+            // Add user message to the conversation
+            conversation.push({"role": "user", "content": text});
+
+            fetch('/process_text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ conversation: conversation }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error from backend:', data.error);
+                } else {
+                    const agentMessage = data.answer;
+                    appendMessage('Agent: ' + agentMessage, 'agent-message');
+                    readAloud(agentMessage);
+
+                    // Add agent response to the conversation
+                    conversation.push({"role": "assistant", "content": agentMessage});
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function readAloud(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'en-US';
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
 </body>
 </html>
