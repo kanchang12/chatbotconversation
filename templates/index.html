@@ -15,9 +15,20 @@
         background-color: #f0f0f0;  /* Light grey background */
     }
        #container {
-        text-align: center;
-        width: 60%;  /* Make the container 60% of the screen width */
-    }
+    text-align: center;
+}
+
+#image-container {
+    width: 40%; /* Make the container 40% of the screen width */
+    margin: auto; /* Center the container horizontally */
+}
+
+#centered-image {
+    display: block;
+    max-width: 100%; /* Ensure the image doesn't exceed the container's width */
+    height: auto; /* Maintain aspect ratio */
+}
+
     #message-box {
         width: 100%;  /* Make the message box take up the full width of the container */
         height: 60vh;  /* Make the message box 60% of the viewport height */
@@ -57,8 +68,9 @@ button {
 <body>
     <div id="container">
     <h2>Talk to a Financial Advisor</h2>
-    <!-- <div id="message-box"></div> -->
-    <img src="https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Appropriate Image">
+    <div id="image-container">
+        <img src="https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Appropriate Image" id="centered-image">
+    </div>
     <button onclick="startRecognition()">Speak</button>
     <button onclick="stopRecognition()">Stop</button>
 </div>
