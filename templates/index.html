@@ -128,7 +128,7 @@ button {
             messageBox.scrollTop = messageBox.scrollHeight;  // Auto-scroll to the bottom
         }
 
-        unction sendTextToBackend(text) {
+        function sendTextToBackend(text) {
             // Add user message to the conversation
             conversation.push({"role": "user", "content": text});
 
@@ -148,12 +148,12 @@ button {
                     appendMessage('Agent: ' + agentMessage, 'agent-message');
                     readAloud(agentMessage);
 
-                    
+                    // Add agent response to the conversation
+                    conversation.push({"role": "assistant", "content": agentMessage});
                 }
             })
             .catch(error => console.error('Error:', error));
         }
-
 
         function readAloud(text) {
             const speech = new SpeechSynthesisUtterance(text);
