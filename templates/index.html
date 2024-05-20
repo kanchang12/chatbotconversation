@@ -6,52 +6,52 @@
     <title>Talk to a Financial Advisor</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;  /* Light grey background */
-        }
-        #container {
-            text-align: center;
-            width: 60%;  /* Make the container 60% of the screen width */
-        }
-        #message-box {
-            width: 100%;  /* Make the message box take up the full width of the container */
-            height: 60vh;  /* Make the message box 60% of the viewport height */
-            border: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: scroll;
-            margin-bottom: 20px;
-          background-color: #ffffff;  /* White background for the message box *
-            box-sizing: border-box;
-        }
-        .user-message {
-            color: black;
-        }
-        .agent-message {
-            color: blue;
-        }
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;  /* Light grey background */
+    }
+       #container {
+        text-align: center;
+        width: 60%;  /* Make the container 60% of the screen width */
+    }
+    #message-box {
+        width: 100%;  /* Make the message box take up the full width of the container */
+        height: 60vh;  /* Make the message box 60% of the viewport height */
+        border: 1px solid #ccc;
+        padding: 10px;
+        overflow-y: auto;  /* Ensure overflow is handled correctly */
+        margin-bottom: 20px;
+        background-color: #ffffff;  /* White background for the message box */
+        box-sizing: border-box;
+    }
+    .user-message {
+        color: black;
+    }
+    .agent-message {
+        color: blue;
+    }
 
-       button {
-            background-color: #4CAF50;  /* Green background for buttons */
-            color: white;  /* White text for buttons */
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 8px;
-        }
+button {
+        background-color: #4CAF50;  /* Green background for buttons */
+        color: white;  /* White text for buttons */
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
 
-        button:hover {
-            background-color: #45a049;  /* Darker green on hover */
-        }
+    button:hover {
+        background-color: #45a049;  /* Darker green on hover */
+    }
     </style>
 </head>
 <body>
