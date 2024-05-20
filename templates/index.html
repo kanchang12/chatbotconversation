@@ -143,10 +143,17 @@ button {
 
             // Add agent response to the conversation
             conversation.push({"role": "assistant", "content": agentMessage});
+
+            // Check if the conversation has exceeded a certain length
+            // Limit the conversation length to prevent the model from getting stuck
+            if (conversation.length >= 10) {
+                stopRecognition();  // Stop the conversation to prevent model from getting stuck
+            }
         }
     })
     .catch(error => console.error('Error:', error));
 }
+
 
 
         function readAloud(text) {
